@@ -29,7 +29,7 @@ def request_ride():
     }
 
     
-    result = mongo.db.rides.insert_one(trip)
+    result = mongo.db.trips.insert_one(trip)
 
     return jsonify({"msg": "Ride requested successfully", "ride_id": str(result.inserted_id)}), 201
     
