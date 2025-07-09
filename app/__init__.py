@@ -1,12 +1,7 @@
-from flask import Flask
-from flask_pymongo import PyMongo
-from flask_jwt_extended import JWTManager  
-from flask_socketio import SocketIO
+from flask import Flask, app
+from app.extensions import mongo, jwt, socketio
 from app.routes import auth, rider, driver
 
-mongo = PyMongo()
-jwt = JWTManager()
-socketio = SocketIO(cors_allowed_origins='*')
 
 def create_app():
     app = Flask(__name__)
@@ -16,8 +11,12 @@ def create_app():
     jwt.init_app(app)
     socketio.init_app(app)
 
-    app.register_blueprint(auth.bp)
-    app.register_blueprint(rider.bp)
-    app.register_blueprint(driver.bp)
+    app.register_blueprint(auth.auth_bp)
+    app.register_blueprint(rider.rider_bp)
+    # app.register_blueprint(driver.driver_bp)
+
+    @app.route('/')
+    def index():
+        return 'Uber Clone Backend is Running!'  # ✅ Add this line
 
     return app
