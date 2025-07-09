@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% block title %}Rider Dashboard{% endblock %}
+
+{% block content %}
+<h2 class="text-center mb-4">Welcome, {{ name }}</h2>
+<div class="card p-4 shadow mx-auto" style="max-width: 500px;">
+  <h4 class="mb-3 text-center">🚖 Request a Ride</h4>
+  <form action="/request_ride" method="post">
+    <div class="mb-3">
+      <label>Pickup Location</label>
+      <input type="text" class="form-control" name="pickup" required>
+    </div>
+    <div class="mb-3">
+      <label>Drop Location</label>
+      <input type="text" class="form-control" name="drop" required>
+    </div>
+    <button class="btn btn-success w-100">Request Ride</button>
+  </form>
+</div>
+{% endblock %}

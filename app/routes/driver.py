@@ -2,6 +2,7 @@ from flask import Blueprint, request, jsonify
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from app.extensions import mongo
 from bson import ObjectId
+from app.utils import get_distance_km
 
 driver_bp = Blueprint('driver', __name__, url_prefix='/api/driver')
 
@@ -89,7 +90,11 @@ def complete_trip(trip_id):
     # 💸 Simple Fare Formula
     # -----------------------
     base_fare = 30
-    distance_km = 5  # Static for now (you can integrate real distance later)
+    pickup = trip['pickup']
+    drop = trip['drop']
+    distance_km = get_distance_km(pickup, drop)
+    if distance_km is None:
+        return jsonify({"msg": "Could not calculate distance"}), 500
     per_km_rate = 10
     total_fare = base_fare + (distance_km * per_km_rate)
 

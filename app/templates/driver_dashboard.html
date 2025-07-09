@@ -1,0 +1,96 @@
+{% extends 'base.html' %}
+{% block title %}Driver Dashboard{% endblock %}
+
+{% block content %}
+<h2 class="text-center">Welcome, {{ name }}</h2>
+
+<!-- Available Ride Requests -->
+<h4 class="mt-5 mb-3 text-center text-primary">🚕 Available Ride Requests</h4>
+{% if available_rides %}
+<table class="table table-bordered table-hover text-center">
+  <thead class="table-dark">
+    <tr>
+      <th>Pickup</th>
+      <th>Drop</th>
+      <th>Action</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for ride in available_rides %}
+    <tr>
+      <td>{{ ride.pickup }}</td>
+      <td>{{ ride.drop }}</td>
+      <td>
+        <form action="/accept_ride/{{ ride._id }}" method="post">
+          <button class="btn btn-sm btn-success">Accept Ride</button>
+        </form>
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% else %}
+<p class="text-center">No ride requests available.</p>
+{% endif %}
+
+
+<!-- Accepted Rides -->
+<h4 class="mt-5 mb-3 text-center text-warning">🟡 Accepted Rides</h4>
+{% if accepted_rides %}
+<table class="table table-bordered text-center">
+  <thead class="table-warning">
+    <tr>
+      <th>Pickup</th>
+      <th>Drop</th>
+      <th>Action</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for ride in accepted_rides %}
+    <tr>
+      <td>{{ ride.pickup }}</td>
+      <td>{{ ride.drop }}</td>
+      <td>
+        <form action="/start_ride/{{ ride._id }}" method="post">
+          <button class="btn btn-sm btn-primary">Start Ride</button>
+        </form>
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% else %}
+<p class="text-center">No accepted rides yet.</p>
+{% endif %}
+
+
+<!-- Ongoing Rides -->
+<h4 class="mt-5 mb-3 text-center">🏁 Ongoing Rides</h4>
+{% if ongoing_rides %}
+<table class="table table-bordered text-center">
+  <thead class="table-info">
+    <tr>
+      <th>Pickup</th>
+      <th>Drop</th>
+      <th>Action</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for ride in ongoing_rides %}
+    <tr>
+      <td>{{ ride.pickup }}</td>
+      <td>{{ ride.drop }}</td>
+      <td>
+        <form action="/complete_ride/{{ ride._id }}" method="post">
+          <button class="btn btn-danger btn-sm">Complete Ride</button>
+        </form>
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% else %}
+<p class="text-center">No ongoing rides.</p>
+{% endif %}
+
+{% endblock %}
