@@ -32,4 +32,19 @@ def request_ride():
     result = mongo.db.trips.insert_one(trip)
 
     return jsonify({"msg": "Ride requested successfully", "ride_id": str(result.inserted_id)}), 201
+
+@rider_bp.route('/my_trips', methods=['GET'])
+@jwt_required()
+def my_trips():
+    rider_id = get_jwt_identity()
+    
+    trips = list(mongo.db.trips.find({"rider_id": ObjectId(rider_id)}))
+
+    for trip in trips:
+        trip['_id'] = str(trip['_id'])
+        trip['rider_id'] = str(trip['rider_id'])
+        if 'driver_id' in trip:
+            trip['driver_id'] = str(trip['driver_id']) if trip['driver_id'] else None
+
+    return jsonify(trips=trips), 200
     

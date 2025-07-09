@@ -68,6 +68,7 @@ def start_trip(trip_id):
 
     return jsonify({"msg": "Trip started successfully"}), 200
 
+
 @driver_bp.route('/complete_trip/<trip_id>', methods=['POST'])
 @jwt_required()
 def complete_trip(trip_id):
@@ -84,10 +85,43 @@ def complete_trip(trip_id):
     if trip['status'] != 'ongoing':
         return jsonify({"msg": "Cannot complete ride. Current status: {}".format(trip['status'])}), 400
 
-    # Update the trip status to completed
+    # -----------------------
+    # 💸 Simple Fare Formula
+    # -----------------------
+    base_fare = 30
+    distance_km = 5  # Static for now (you can integrate real distance later)
+    per_km_rate = 10
+    total_fare = base_fare + (distance_km * per_km_rate)
+
+    # Update trip status and fare
     mongo.db.trips.update_one(
         {"_id": ObjectId(trip_id)},
-        {"$set": {"status": "completed"}}
+        {
+            "$set": {
+                "status": "completed",
+                "fare": total_fare
+            }
+        }
     )
 
-    return jsonify({"msg": "Trip completed successfully"}), 200
+    return jsonify({
+        "msg": "Ride completed successfully",
+        "fare": total_fare,
+        "distance_km": distance_km
+    }), 200
+
+
+@driver_bp.route('/my_trips', methods=['GET'])
+@jwt_required()
+def my_trips():
+    driver_id = get_jwt_identity()  
+
+    trips = list(mongo.db.trips.find({"driver_id": ObjectId(driver_id)}))
+
+    for trip in trips:
+        trip['_id'] = str(trip['_id'])
+        trip['rider_id'] = str(trip['rider_id'])
+        if 'driver_id' in trip:
+            trip['driver_id'] = str(trip['driver_id'])
+
+    return jsonify(trips=trips), 200
